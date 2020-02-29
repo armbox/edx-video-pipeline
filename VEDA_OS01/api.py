@@ -14,6 +14,7 @@ from oauth2_provider.models import AccessToken
 
 from rest_framework.authtoken.models import Token
 from django.contrib.auth.models import User
+from django.core.exceptions import ObjectDoesNotExist
 
 
 primary_directory = os.path.dirname(__file__)
@@ -29,8 +30,11 @@ def token_finisher(token_id):
     d.user = User.objects.get(pk=1)
     d.save()
 
-    Token.objects.filter(user=d.user).delete();
-
-    token = Token.objects.create(user=d.user)
+    # https://github.com/armbox/edux/issues/70
+    # WARN: possible security issue due to not refreshing token
+    try:
+        token = Token.objects.get(user=d.user)
+    except ObjectDoesNotExist:
+        token = Token.objects.create(user=d.user)
 
     return token.key
