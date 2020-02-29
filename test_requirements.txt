@@ -15,3 +15,5 @@ pylint==1.7.1
 pylint-celery==0.3
 pylint-django==0.7.2
 responses==0.6.1
+Faker==3.0.1
+mock==3.0.5
