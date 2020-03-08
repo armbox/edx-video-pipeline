@@ -9,6 +9,7 @@ will get the token id from a url view, auth it, then push forward with a success
 
 import os
 import sys
+import logging
 
 from oauth2_provider.models import AccessToken
 
@@ -16,6 +17,7 @@ from rest_framework.authtoken.models import Token
 from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
 
+LOGGER = logging.getLogger(__name__)
 
 primary_directory = os.path.dirname(__file__)
 sys.path.append(primary_directory)
@@ -24,7 +26,8 @@ sys.path.append(primary_directory)
 def token_finisher(token_id):
     try:
         d = AccessToken.objects.get(token=token_id)
-    except:
+    except Exception, e:
+        LOGGER.error("failed to get AccessToken" + str(e))
         return False
 
     d.user = User.objects.get(pk=1)
